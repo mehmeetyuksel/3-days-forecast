@@ -21,10 +21,10 @@ function Homepage() {
                 "method": "GET",
                 "headers": {
                     "x-rapidapi-host": "ip-geo-location.p.rapidapi.com",
-                    "x-rapidapi-key": "a72edcbfaamsh96bf1fc7aee8f23p1c27fajsn74d1a5ffa4a4"
+                    "x-rapidapi-key": `${process.env.REACT_APP_IP_API_KEY}`
                 }
             }).then(async (res) => {
-                await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=28193ed4b743490692a92524212408&q=${res.data.city.name}&days=3`).then((response) => setForecast(response))
+                await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=${process.env.REACT_APP_FORECAST_API_KEY}&q=${res.data.city.name}&days=3`).then((response) => setForecast(response))
             }
             );
         },

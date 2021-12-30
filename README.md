@@ -1,4 +1,11 @@
-# Getting Started with Create React App
+## You can click to visit app <a href="https://forecast-of-3days.herokuapp.com/">Click</a>
+
+This app initially determines your city from your IP address and shows your city's 3 days forecast. After that, by using the search bar, you can get the 3 days forecast of any city you wish. React Bootstrap, React Router v6, React Query, axios are used for that project.
+
+Adding your city to favorites will be added soon!
+
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
