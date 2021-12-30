@@ -2,11 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import './App.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 import reportWebVitals from './reportWebVitals';
+import {BrowserRouter} from "react-router-dom"
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { ForecastProvider } from './context/ForecastContext';
+
+const queryClient = new QueryClient()
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <ForecastProvider>
+      <App  />
+      </ForecastProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
