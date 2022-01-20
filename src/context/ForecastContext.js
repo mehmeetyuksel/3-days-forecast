@@ -6,9 +6,10 @@ const ForecastProvider = ({ children }) => {
 
 
     const [forecast, setForecast] = useState([]);
+    const [favs, setFavs] = useState([]);
 
 
-    return <ForecastContext.Provider value={{ forecast, setForecast }}>{children}</ForecastContext.Provider>
+    return <ForecastContext.Provider value={{ forecast, setForecast, favs, setFavs }}>{children}</ForecastContext.Provider>
 }
 
 const useForecast = () => useContext(ForecastContext)

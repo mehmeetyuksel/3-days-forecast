@@ -1,8 +1,8 @@
 import React from 'react'
 import '../App.css';
-import { Row, Container, InputGroup, FormControl, Button, Card, Table, Spinner } from "react-bootstrap"
+import { Row, Container, Col, InputGroup, FormControl, Button, Card, Table, Spinner, Offcanvas } from "react-bootstrap"
 import axios from "axios"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import logo from "../img/logo.png"
 import { useQuery } from "react-query"
@@ -11,7 +11,18 @@ import { useForecast } from "../context/ForecastContext"
 
 function Homepage() {
     const [city, setCity] = useState([])
-    const { forecast, setForecast } = useForecast();
+    const { forecast, setForecast, favs, setFavs } = useForecast();
+    useEffect(() => {
+        console.log(favs)
+    }, [favs])
+
+
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+
+    const inputRef = useRef()
 
 
     const { isLoading, isError, error } = useQuery(
@@ -31,7 +42,7 @@ function Homepage() {
         {
             refetchOnWindowFocus: false,
             refetchOnMount: false,
-            refetchOnReconnect: false,
+            refetchOnReconnect: true,
             refetchInterval: false
         }
     );
@@ -54,7 +65,8 @@ function Homepage() {
     const handleKeyPress = (e) => {
         if (e.key === "Enter") {
             if (e.target.value === "") {
-                alert("Enter a value"); e.preventDefault()
+                alert("Enter a value"); 
+                e.preventDefault()
             }
 
             else {
@@ -64,16 +76,54 @@ function Homepage() {
             }
         }
     }
-    const getCityForecast = (city) => {
-        axios.get(`https://api.weatherapi.com/v1/forecast.json?key=28193ed4b743490692a92524212408&q=${city}&days=3`).then((response) => setForecast(response)).catch((err) => alert("Unvalid city name. Please use English names."));
+    const getCityForecast = async (city) => {
+         await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=28193ed4b743490692a92524212408&q=${city}&days=3`).then((response) => setForecast(response)).catch((err) => alert("Unvalid city name. Please use English names."));
+         inputRef.current.value = "";
+         
     }
+
+
+    const setFavorite = (city) => {
+        setFavs([...favs, city])
+        
+    }
+    const deleteFavorite = (city) => {
+        let newArr = [...favs];
+        let filteredArr = newArr.filter(el => el !== city);
+        setFavs(filteredArr);
+    }
+
+    
     return (
 
         <div className="app">
             {
-
-
                 <Container>
+
+
+<div className="text-center">
+      <Button className="btn btn-sm" variant="danger"  onClick={handleShow}>
+        Favorite Cities
+      </Button>
+
+      <Offcanvas show={show} onHide={handleClose} >
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title >Your Favorite Cities</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          {
+              favs.map((el) => (
+                  <>
+                  <Button className={``} onClick={() => getCityForecast(el)}>{el}</Button> <br/>
+                  </>
+              ))
+          }
+        </Offcanvas.Body>
+      </Offcanvas>
+    </div>
+
+
+
 
                     <Row className='justify-content-center'>
                         <img src={logo} className="logo mt-5" alt="logo"></img>
@@ -82,14 +132,25 @@ function Homepage() {
                     <Row className="mt-3 justify-content-center">
                         <InputGroup size="sm" className="mb-3">
                             <InputGroup.Text id="inputGroup-sizing-sm"  >Enter a city name</InputGroup.Text>
-                            <FormControl aria-label="Small" aria-describedby="inputGroup-sizing-sm"  onChange={(e) => handleChange(e.target.value)} onKeyDown={handleKeyPress} />
+                            <FormControl  aria-label="Small" aria-describedby="inputGroup-sizing-sm" ref={inputRef}  onChange={(e) => handleChange(e.target.value)} onKeyDown={handleKeyPress} />
                             <Button variant="info" className="btn" id="button-addon2" onClick={() => getCityForecast(city.trim())}>
                                 Search
                             </Button>
                         </InputGroup>
                     </Row>
                     <Row className="text-center">
+                        <Col>
                         <h1>{forecast.data.location.name}, {forecast.data.location.country}, {forecast.data.location.localtime.split(" ")[1]}</h1>
+                        
+                        {
+                        favs.includes(forecast.data.location.name) ? 
+                         <Button className="btn btn-sm btn-danger" onClick={() => deleteFavorite(forecast.data.location.name)}>Remove Fav</Button> 
+                        :<Button className="btn btn-sm btn-primary" onClick={() => setFavorite(forecast.data.location.name)}>Add Fav</Button>
+                        }
+                        
+                        </Col>
+                       
+                        
                     </Row>
 
                     <Row className="justify-content-evenly mt-3">
