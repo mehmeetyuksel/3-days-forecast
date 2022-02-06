@@ -10,8 +10,7 @@ import { useForecast } from "../context/ForecastContext"
 
 
 function Homepage() {
-    const [city, setCity] = useState([])
-    const { forecast, setForecast, favs, setFavs } = useForecast();
+    const { forecast, setForecast, favs, setFavs, city, setCity } = useForecast();
     useEffect(() => {
         console.log(favs)
     }, [favs])
