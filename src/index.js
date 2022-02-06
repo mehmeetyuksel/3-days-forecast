@@ -16,7 +16,7 @@ ReactDOM.render(
     <BrowserRouter>
     <QueryClientProvider client={queryClient}>
       <ForecastProvider>
-      <App  />
+        <App  />
       </ForecastProvider>
       </QueryClientProvider>
     </BrowserRouter>

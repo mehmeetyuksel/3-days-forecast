@@ -35,6 +35,7 @@ function Homepage() {
                     "x-rapidapi-key": `${process.env.REACT_APP_IP_API_KEY}`
                 }
             }).then(async (res) => {
+                setCity(res.data.city.name);
                 await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=${process.env.REACT_APP_FORECAST_API_KEY}&q=${res.data.city.name}&days=3`).then((response) => setForecast(response))
             }
             );
@@ -65,7 +66,7 @@ function Homepage() {
     const handleKeyPress = (e) => {
         if (e.key === "Enter") {
             if (e.target.value === "") {
-                alert("Enter a value"); 
+                alert("Enter a value");
                 e.preventDefault()
             }
 
@@ -77,15 +78,14 @@ function Homepage() {
         }
     }
     const getCityForecast = async (city) => {
-         await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=28193ed4b743490692a92524212408&q=${city}&days=3`).then((response) => setForecast(response)).catch((err) => alert("Unvalid city name. Please use English names."));
-         inputRef.current.value = "";
-         
+        await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=28193ed4b743490692a92524212408&q=${city}&days=3`).then((response) => setForecast(response)).catch((err) => alert("Unvalid city name. Please use English names.")).finally(setCity(city));
+        inputRef.current.value = "";
     }
 
 
     const setFavorite = (city) => {
         setFavs([...favs, city])
-        
+
     }
     const deleteFavorite = (city) => {
         let newArr = [...favs];
@@ -93,7 +93,7 @@ function Homepage() {
         setFavs(filteredArr);
     }
 
-    
+
     return (
 
         <div className="app">
@@ -101,26 +101,27 @@ function Homepage() {
                 <Container>
 
 
-<div className="text-center">
-      <Button className="btn btn-sm" variant="danger"  onClick={handleShow}>
-        Favorite Cities
-      </Button>
+                    <div className="text-center">
+                        <Button className="btn btn-sm" variant="danger" onClick={handleShow}>
+                            Favorite Cities
+                        </Button>
 
-      <Offcanvas show={show} onHide={handleClose} >
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title >Your Favorite Cities</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-          {
-              favs.map((el) => (
-                  <>
-                  <Button className={``} onClick={() => getCityForecast(el)}>{el}</Button> <br/>
-                  </>
-              ))
-          }
-        </Offcanvas.Body>
-      </Offcanvas>
-    </div>
+                        <Offcanvas show={show} onHide={handleClose} >
+                            <Offcanvas.Header closeButton>
+                                <Offcanvas.Title >Your Favorite Cities</Offcanvas.Title>
+                            </Offcanvas.Header>
+                            <Offcanvas.Body>
+                                {
+                                    favs.map((el) => (
+                                        <div className='mb-3'>
+                                            <Button variant={`${city.toLowerCase() === el.toLowerCase() ? "danger" : "outline-danger"}`} style={{ width: "10rem", marginRight: ".4rem" }} onClick={() => getCityForecast(el)}>{el}</Button>
+                                            <Button variant="danger" onClick={() => deleteFavorite(el)}>X</Button> <br />
+                                        </div>
+                                    ))
+                                }
+                            </Offcanvas.Body>
+                        </Offcanvas>
+                    </div>
 
 
 
@@ -132,7 +133,7 @@ function Homepage() {
                     <Row className="mt-3 justify-content-center">
                         <InputGroup size="sm" className="mb-3">
                             <InputGroup.Text id="inputGroup-sizing-sm"  >Enter a city name</InputGroup.Text>
-                            <FormControl  aria-label="Small" aria-describedby="inputGroup-sizing-sm" ref={inputRef}  onChange={(e) => handleChange(e.target.value)} onKeyDown={handleKeyPress} />
+                            <FormControl aria-label="Small" aria-describedby="inputGroup-sizing-sm" ref={inputRef} onChange={(e) => handleChange(e.target.value)} onKeyDown={handleKeyPress} />
                             <Button variant="info" className="btn" id="button-addon2" onClick={() => getCityForecast(city.trim())}>
                                 Search
                             </Button>
@@ -140,17 +141,17 @@ function Homepage() {
                     </Row>
                     <Row className="text-center">
                         <Col>
-                        <h1>{forecast.data.location.name}, {forecast.data.location.country}, {forecast.data.location.localtime.split(" ")[1]}</h1>
-                        
-                        {
-                        favs.includes(forecast.data.location.name) ? 
-                         <Button className="btn btn-sm btn-danger" onClick={() => deleteFavorite(forecast.data.location.name)}>Remove Fav</Button> 
-                        :<Button className="btn btn-sm btn-primary" onClick={() => setFavorite(forecast.data.location.name)}>Add Fav</Button>
-                        }
-                        
+                            <h1>{forecast.data.location.name}, {forecast.data.location.country}, {forecast.data.location.localtime.split(" ")[1]}</h1>
+
+                            {
+                                favs.includes(forecast.data.location.name) ?
+                                    <Button className="btn btn-sm btn-danger" style={{width: "5rem"}} onClick={() => deleteFavorite(forecast.data.location.name)}>Remove</Button>
+                                    : <Button className="btn btn-sm btn-primary" style={{width: "5rem"}} onClick={() => setFavorite(forecast.data.location.name)}>Favorite</Button>
+                            }
+
                         </Col>
-                       
-                        
+
+
                     </Row>
 
                     <Row className="justify-content-evenly mt-3">
