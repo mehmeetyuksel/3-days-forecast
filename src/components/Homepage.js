@@ -80,7 +80,7 @@ function Homepage() {
         await axios.get(`https://api.weatherapi.com/v1/forecast.json?key=28193ed4b743490692a92524212408&q=${city}&days=3`).then((response) => 
         {setForecast(response);
         setCity(response.data.location.name)}
-        ).catch((err) => alert("Unvalid city name. Please use English names."))
+        ).catch((err) => alert("Unvalid city name. Please use English names!."))
         inputRef.current.value = "";
     }
 
